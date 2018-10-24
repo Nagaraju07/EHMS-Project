@@ -1,0 +1,238 @@
+use Sep19CHN
+create schema EHMS
+
+create table EHMS.Users
+(
+UserName varchar(25) primary key, 
+Password varchar(25) not null, 
+UserType varchar(15) ,
+)
+
+create table EHMS.State
+(
+StateId int identity primary key, 
+StateName varchar(30)
+)
+
+
+create table EHMS.City
+(
+
+CityId int identity primary key, 
+CityName varchar(50) not null, 
+
+
+StateId int not null,
+
+Foreign key(StateId) references  EHMS.State(StateId)
+)
+
+
+create table EHMS.Seller
+(
+SellerId int identity primary key,
+ UserName varchar(25) not null,
+ FirstName varchar(25) not null, 
+ LastName varchar(25),
+  DateofBirth date not null,
+ PhoneNo varchar(10) not null,
+ Address varchar(250) not null,
+ StateId int  not null,
+ CityId int  not null, 
+ EmailId varchar(50) not null,
+ Foreign Key(StateId) references EHMS.State(StateId),
+ Foreign key(CityId) references EHMS.City(CityId)
+ )
+
+ create table EHMS.Buyer
+ (
+ 
+ BuyerId int identity primary key,
+ FirstName varchar(25) not null,
+ LastName varchar(25),
+ DateOfBirth date not null, 
+ PhoneNo varchar(10) not null,
+ EmailId varchar(50) not null
+ 
+ )
+
+ create table EHMS.Property
+ (
+ PropertyId int identity primary key, 
+ PropertyName varchar(50) not null, 
+ PropertyType varchar(15) not null, 
+ PropertyOption varchar(10) not null, 
+ Description varchar(250),
+ Address varchar(250) not null, 
+ PriceRange money not null, 
+ InitialDeposit money not null, 
+ Landmark varchar(25) not null,
+ IsActive bit not null,
+ SellerId int  not null,
+ Foreign key(SellerId) references EHMS.Seller(SellerId)
+)
+
+create table EHMS.Images
+(
+ImageId int identity primary key, 
+PropertyId int  not null,
+ Image image not null,
+ foreign key(PropertyId) references EHMS.Property(PropertyId)
+ )
+
+ create table EHMS.Cart
+ (
+  CartId int identity primary key,
+  BuyerId int  not null, 
+  PropertyId int  not null,
+  foreign key(BuyerId) references EHMS.Buyer(BuyerId),
+  Foreign key(PropertyId) references EHMS.Property(PropertyId)
+)
+
+select * from EHMS.Users
+insert into EHMS.users values('Nag','adcxz','admin');
+
+select * from EHMS.State
+select *from EHMS.City
+select *from EHMS.Seller
+select *from EHMS.Buyer
+select *from EHMS.Property
+select *from EHMS.Images
+select *from EHMS.Cart
+
+ -------------------------------------------------------------------------------------------------------
+ -----------------------------------------ADD User--------------------------------------------------------------
+Create proc EHMS.usp_AddUsers
+ @uname varchar(25),
+ @uid int,
+ @upwd   varchar(25),
+ @utype varchar(15)
+ AS
+ begin 
+ insert into EHMS.Users values(@uname,@upwd,@utype)
+ end
+ 
+ --------------------------------------ADD Seller-----------------------------------------------------
+ create proc EHMS.usp_AddSeller
+ @sid int,
+ @suname varchar(25),
+ @sfname varchar(25),
+ @slname varchar(25),
+ @sdob date,
+ @sph varchar(10),
+ @saddr varchar(250),
+ @sstateid int,
+ @scid int,
+ @semail varchar(50)
+ as
+ begin
+ insert into EHMS.Seller values(@suname,@sfname,@slname,@sdob,@sph,@saddr,@sstateid,@scid,@semail)
+ end
+ 
+ -----------------------------------ADD Buyer---------------------------------------------------------
+
+
+ create proc EHMS.usp_AddBuyer
+ @bid int,
+ @bfname varchar(25),
+ @blname varchar(25),
+ @bdob date,
+ @bph varchar(10),
+ @bemail varchar(50)
+ AS 
+ Begin
+ insert into EHMS.Buyer values( @bfname,@blname, @bdob ,@bph,@bemail)
+ End
+
+ ----------------------------------ADD Property-----------------------------------------------------
+ create proc EHMS.usp_AddProperty
+ @pid int,
+ @pname varchar(50),
+ @ptype varchar(15),
+ @poption varchar(10),
+ @pdesc varchar(250),
+ @paddr varchar(250),
+ @prange money,
+ @pideposit money,
+ @plandmark varchar(25),
+ @pisactive bit,
+ @sid int
+ as
+ begin
+ insert into EHMS.AddProperty values(@pid,@pname, @ptype, @poption, @pdesc, @paddr,@prange,@pideposit,@plandmark,@plandmark,@pisactive,@sid)
+ end
+
+ --------------------------------EDIT Property----------------------------------------------------
+ create proc EHMS.usp_EditProperty
+ @pid int,
+ @pname varchar(50),
+ @ptype varchar(15),
+ @poption varchar(10),
+ @pdesc varchar(250),
+ @paddr varchar(250),
+ @prange money,
+ @pideposit money,
+ @plandmark varchar(25),
+ @pisactive bit,
+ @sid int
+ as
+ begin
+ update EHMS.Property set  PropertyName= @pname, PropertyType= @ptype , PropertyOption= @poption,
+ Description=@pdesc,Address= @paddr , PriceRange= @prange, InitialDeposit= @pideposit,Landmark = @plandmark,
+  IsActive=@pisactive,SellerId= @sid
+where PropertyId=@pid
+ end
+ ---------------------------------------------------------------------------------------------------
+
+ select * from EHMS.Users
+
+
+ select * from EHMS.Property
+ 
+
+
+ 
+
+insert into EHMS.State values('tamilnadu')
+select * from EHMS.State
+insert into EHMS.City Values('chennai',1)
+select *from EHMS.city
+
+
+
+
+ 
+
+insert into EHMS.Seller values('Name','igate','cg','1996/02/15',1234567890,'sipcot',1,5,'cap@email.com')
+select *from EHMS.Seller
+
+
+insert into EHMS.Property values('visual','3bhk','rent','new','sipcot',25000,10000,'itpark',0, 1)
+select * from EHMS.Property
+
+ALTER TABLE EHMS.Users
+add UserID int identity
+
+
+select *from EHMS.Users
+
+------------------------------------NEXT UserID-----------------------------------------------------
+create proc EHMS.usp_NextuId
+@newuId int out
+AS
+BEGIN
+set @newuId=(select IDENT_CURRENT('EHMS.Users')+ident_incr('EHMS.Users'))
+END
+
+
+-------------------------------------------------------------------------------------------
+
+
+select Username,Password from EHMS.Users
+
+select UserType,UserId from EHMS.Users where Username ='Nag' AND Password='adcxz' 
+
+
+
+
+
